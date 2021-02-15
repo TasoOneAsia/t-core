@@ -1,31 +1,15 @@
 import { Connection } from 'typeorm';
-import { Character as CharacterEntity } from '../db/models/Characters';
+import { CharacterEntity as CharacterEntity } from '../db/models/CharacterEntity';
 import { Logger } from 'winston';
 import { mainLogger } from './logger';
+import { ICreateCharacter, UserCharacter } from '../../types';
+import { getCharacterRepo } from '../db/repositories/CharacterRepository';
+import { getAccountRepo } from '../db/repositories/AccountsRepository';
 
 interface IPlayerOpts {
   source: number;
   identifier: string;
   db: Connection;
-}
-
-interface ICreateCharacter {
-  name: string;
-  DOB: string;
-  gender: 'male' | 'female';
-}
-
-export interface Character {
-  name: string;
-  DOB: string;
-  gender: 'male' | 'female';
-  characterID: number;
-  bank: number;
-  cash: number;
-  playerIdentifier: string;
-  location: string;
-  createdOn: Date;
-  updatedOn: Date;
 }
 
 export default class Player {
@@ -35,8 +19,8 @@ export default class Player {
   });
   public readonly source: number;
   private _loadedCharacter: boolean = false;
-  private _currentCharacter: Character | null = null;
-  private _db: Connection;
+  private _currentCharacter: UserCharacter | null = null;
+  private readonly _db: Connection;
 
   constructor(playerOptions: IPlayerOpts) {
     this.identifier = playerOptions.identifier;
@@ -52,22 +36,36 @@ export default class Player {
     DropPlayer(this.source.toString(), reason);
   }
 
-  public createCharacter(characterParams: ICreateCharacter) {}
+  public async createCharacter(
+    characterParams: ICreateCharacter
+  ): Promise<CharacterEntity | null> {
+    try {
+      const charRepo = getCharacterRepo(this._db);
+      return await charRepo.createNewCharacter({
+        playerIdent: this.identifier,
+        name: characterParams.name,
+        gender: characterParams.gender,
+        DOB: characterParams.DOB,
+      });
+    } catch (e) {
+      e.prepareStackTrace = null;
+      this._logger.error('Failed to create character');
+      this._logger.error(e);
+      return null;
+    }
+  }
 
-  public getCurrentChar(): Character | null {
+  public getCurrentChar(): UserCharacter | null {
     if (this._loadedCharacter && this._currentCharacter) {
       return this._currentCharacter;
     }
     return null;
   }
 
-  public async getCharacters(): Promise<Character[] | null> {
+  public async getCharacters() {
     try {
-      const charactersRepo = this._db.getRepository(CharacterEntity);
-      const characters: Character[] = await charactersRepo.find({
-        where: { playerIdentifier: this.identifier },
-      });
-      return characters;
+      const charsRepo = getCharacterRepo(this._db);
+      return await charsRepo.getCharactersFromIdent(this.identifier);
     } catch (e) {
       e.prepareStackTrace = null;
       this._logger.error('Failed to get characters');
@@ -76,12 +74,44 @@ export default class Player {
     }
   }
 
-  public useCharacter(id: number) {
-    // Switch character
+  public async useCharacter(id: number): Promise<CharacterEntity | void> {
+    try {
+      const charsRepo = getCharacterRepo(this._db);
+      const char = await charsRepo.getCharacterFromCharId(id);
+      this._currentCharacter = char;
+      return char;
+    } catch (e) {
+      e.prepareStackTrace = null;
+      this._logger.error('Failed to use character');
+      this._logger.error(e);
+    }
   }
 
-  public deleteCharacter(id: number): void {
-    // Delete character
+  public async deleteCharacter(id: number): Promise<void> {
+    try {
+      const charsRepo = getCharacterRepo(this._db);
+      await charsRepo.deleteCharFromId(id);
+    } catch (e) {
+      e.prepareStackTrace = null;
+      this._logger.error('Failed to delete character');
+      this._logger.error(e);
+    }
+  }
+
+  public async getCharacterAccounts() {
+    if (this._currentCharacter) {
+      try {
+        const accountsRepo = getAccountRepo(this._db);
+        return await accountsRepo.findAccountsforCharacter(
+          this._currentCharacter.characterID
+        );
+      } catch (e) {
+        e.prepareStackTrace = null;
+        this._logger.error('Failed to get character accounts');
+        this._logger.error(e);
+        return null;
+      }
+    }
   }
 
   public save(): void {
