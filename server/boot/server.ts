@@ -1,5 +1,6 @@
-import TCore from '../core';
+import TCore from '../modules/core';
+import '../modules/main';
 
 require('dotenv').config();
 
-const ServerCore = new TCore();
+export const ServerCore = new TCore();

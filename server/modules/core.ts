@@ -1,6 +1,6 @@
 import { Logger } from 'winston';
-import { mainLogger } from './modules/logger';
-import Player from './modules/Player';
+import { mainLogger } from './logger';
+import Player from './player';
 
 interface IPlayersBySource {
   [source: number]: Player;
