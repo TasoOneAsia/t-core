@@ -12,8 +12,7 @@ const formatLogs = (log: winston.Logform.TransformableInfo): string => {
 };
 
 const findLogPath = () =>
-  `${path.join(GetResourcePath(GetCurrentResourceName()), 'sv_npwd.log')}`;
-// Initiate the main logger for NPWD
+  `${path.join(GetResourcePath(GetCurrentResourceName()), 'sv-tCore.log')}`;
 
 export const mainLogger = winston.createLogger({
   level: process.env.DEBUG_LEVEL,
