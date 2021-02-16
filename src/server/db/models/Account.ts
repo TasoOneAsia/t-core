@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export default class AccountEntity {
+export default class Account {
   @PrimaryGeneratedColumn()
   accountId!: number;
 

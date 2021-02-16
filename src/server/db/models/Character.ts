@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class CharacterEntity {
+export class Character {
   @PrimaryGeneratedColumn()
   characterID!: number;
 
@@ -21,7 +21,7 @@ export class CharacterEntity {
   @Column({
     nullable: false,
   })
-  playerIdentifier!: string;
+  playerLicense!: string;
 
   @Column({
     default: null,

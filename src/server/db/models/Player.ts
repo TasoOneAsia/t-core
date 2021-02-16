@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class PlayerEntity {
+export class Player {
   @PrimaryColumn()
   license!: string;
 

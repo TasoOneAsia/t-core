@@ -1,7 +1,7 @@
 import { ConnectionManager } from 'typeorm';
-import AccountEntity from './models/AccountEntity';
-import { CharacterEntity } from './models/CharacterEntity';
-import { PlayerEntity } from './models/PlayerEntity';
+import Account from './models/Account';
+import { Character } from './models/Character';
+import { Player } from './models/Player';
 
 const connectionManager = new ConnectionManager();
 
@@ -12,7 +12,7 @@ connectionManager.create({
   username: process.env.DB_USERNAME || 'root',
   host: process.env.DB_HOST || 'localhost',
   database: process.env.DB_NAME || 't-core',
-  entities: [AccountEntity, CharacterEntity, PlayerEntity],
+  entities: [Account, Character, Player],
   synchronize: true,
 });
 

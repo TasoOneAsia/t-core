@@ -1,10 +1,10 @@
 import { EntityRepository, Repository, Connection } from 'typeorm';
-import { PlayerEntity } from '../models/PlayerEntity';
+import { Player } from '../models/Player';
 
-@EntityRepository(PlayerEntity)
-class PlayerRepository extends Repository<PlayerEntity> {
-  async createPlayer(license: string): Promise<PlayerEntity> {
-    const newPlayer = new PlayerEntity();
+@EntityRepository(Player)
+class PlayerRepository extends Repository<Player> {
+  async createPlayer(license: string): Promise<Player> {
+    const newPlayer = new Player();
     newPlayer.license = license;
     return await this.save(newPlayer);
   }

@@ -1,25 +1,23 @@
 import { EntityRepository, Repository, Connection } from 'typeorm';
-import { CharacterEntity } from '../models/CharacterEntity';
+import { Character } from '../models/Character';
 import { ICreateCharacter } from '../../../types';
 
-@EntityRepository(CharacterEntity)
-class CharacterRepository extends Repository<CharacterEntity> {
-  async createNewCharacter(charParams: ICreateCharacter): Promise<CharacterEntity> {
-    const char = new CharacterEntity();
+@EntityRepository(Character)
+class CharacterRepository extends Repository<Character> {
+  async createNewCharacter(charParams: ICreateCharacter): Promise<Character> {
+    const char = new Character();
     char.DOB = charParams.DOB;
     char.gender = charParams.gender;
     char.name = charParams.name;
-    char.playerIdentifier = charParams.playerIdent;
+    char.playerLicense = charParams.playerIdent;
     return await this.save(char);
   }
 
-  async getCharactersFromIdent(
-    playerIdent: string
-  ): Promise<CharacterEntity[] | CharacterEntity> {
-    return await this.find({ where: { playerIdentifier: playerIdent } });
+  async getCharactersFromLicense(license: string): Promise<Character[]> {
+    return await this.find({ where: { playerLicense: license } });
   }
 
-  async getCharacterFromCharId(charId: number): Promise<CharacterEntity> {
+  async getCharacterFromCharId(charId: number): Promise<Character> {
     const char = await this.findOne({ where: { characterID: charId } });
     if (char) return char;
     throw new Error(`Could not find character for ${charId}`);
