@@ -7,11 +7,11 @@ const connectionManager = new ConnectionManager();
 
 connectionManager.create({
   type: 'mysql',
-  port: 3306,
-  password: 'devlocal',
-  username: 'dev',
-  host: 'localhost',
-  database: 't-core',
+  port: parseInt(process.env.DB_PORT) || 3306,
+  password: process.env.DB_PASSWORD || undefined,
+  username: process.env.DB_USERNAME || 'root',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DB_NAME || 't-core',
   entities: [AccountEntity, CharacterEntity, PlayerEntity],
   synchronize: true,
 });

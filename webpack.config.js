@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const RemovePlugin = require('remove-files-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const buildPath = path.resolve(__dirname, 'dist');
 
@@ -36,6 +37,7 @@ const buildServer = {
         include: [serverBuildPath],
       },
     }),
+    new Dotenv(),
   ],
   optimization: {
     minimize: false,
