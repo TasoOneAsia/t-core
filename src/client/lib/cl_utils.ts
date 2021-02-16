@@ -1,5 +1,4 @@
 import { uuidv4 } from 'fivem-js';
-import { Delay } from '../../shared/utils';
 
 interface ISettings {
   promiseTimeout: number;

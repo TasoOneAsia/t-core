@@ -1,5 +1,4 @@
 import { Connection } from 'typeorm';
-// @ts-ignore
 import DBConnection from '../connection';
 import { Logger } from 'winston';
 import { mainLogger } from '../../modules/logger';
@@ -10,11 +9,10 @@ export default class Database {
     module: 'database',
   });
   constructor() {
-    this.db = DBConnection.get('t-core');
-    this._initDb();
+    this.db = DBConnection.get();
   }
 
-  private async _initDb() {
+  public async initDb() {
     try {
       await this.db.connect();
       if (process.env.NODE_ENV === 'development') await this.db.synchronize();

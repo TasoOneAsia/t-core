@@ -1,55 +1,62 @@
-const webpack = require('webpack')
-const path = require('path')
-const RemovePlugin = require('remove-files-webpack-plugin')
+const webpack = require('webpack');
+const path = require('path');
+const RemovePlugin = require('remove-files-webpack-plugin');
 
-const buildPath = path.resolve(__dirname, 'dist')
+const buildPath = path.resolve(__dirname, 'dist');
 
-const serverBuildPath = path.resolve(buildPath, 'server')
+const serverBuildPath = path.resolve(buildPath, 'server');
 
-const clientBuildPath = path.resolve(buildPath, 'client')
+const clientBuildPath = path.resolve(buildPath, 'client');
 
 const buildServer = {
-  entry: './server/server.ts',
+  entry: './src/server/server.ts',
+  externals: {
+    typeorm: 'commonjs typeorm',
+  },
   module: {
     rules: [
       {
         test: /\.ts?$/,
         use: ['ts-loader'],
         exclude: /node_modules/,
-      }
-    ]
+      },
+    ],
+  },
+  node: {
+    __dirname: false,
+    __filename: false,
   },
   plugins: [
-    new webpack.DefinePlugin({'global.GENTLY': false}),
+    new webpack.DefinePlugin({ 'global.GENTLY': false }),
     new RemovePlugin({
       before: {
-        include: [serverBuildPath]
+        include: [serverBuildPath],
       },
       watch: {
-        include: [serverBuildPath]
-      }
-    })
+        include: [serverBuildPath],
+      },
+    }),
   ],
   optimization: {
-    minimize: true
+    minimize: false,
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
   },
   output: {
-    fileName: '[contenthash].server.js',
-    path: serverBuildPath
+    filename: '[contenthash].server.js',
+    path: serverBuildPath,
   },
-  target: 'node'
-}
+  target: 'node',
+};
 
 const buildClient = {
-  entry: "./client/client.ts",
+  entry: './src/client/client.ts',
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: ["ts-loader"],
+        use: ['ts-loader'],
         exclude: /node_modules/,
       },
     ],
@@ -65,15 +72,15 @@ const buildClient = {
     }),
   ],
   optimization: {
-    minimize: true,
+    minimize: false,
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: ['.ts', '.js'],
   },
   output: {
-    filename: "[contenthash].client.js",
+    filename: '[contenthash].client.js',
     path: clientBuildPath,
   },
 };
 
-module.exports = [buildServer, buildClient]
+module.exports = [buildServer, buildClient];

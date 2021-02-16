@@ -20,7 +20,7 @@ export default class AccountEntity {
   @Column({
     type: 'timestamp',
     onUpdate: 'CURRENT_TIMESTAMP',
-    default: 'CURRENT_TIMESTAMP',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   lastUpdated!: Date;
 }

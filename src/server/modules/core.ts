@@ -1,6 +1,8 @@
 import { Logger } from 'winston';
 import { mainLogger } from './logger';
 import Player from './player';
+import { Connection, getConnectionManager } from 'typeorm';
+import connectionManager from '../db/connection';
 
 interface IPlayersBySource {
   [source: number]: Player;
@@ -16,6 +18,7 @@ interface IPlayersByCharacter {
 
 export default class TCore {
   private _logger: Logger;
+  private _db: Connection = connectionManager.get();
   private playersByLicense: IPlayersByLicense = {};
   private playersBySource: IPlayersBySource = {};
   private playersByCharacter: IPlayersByCharacter = {};

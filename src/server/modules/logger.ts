@@ -1,5 +1,5 @@
-import winston, { format } from 'winston';
-import * as path from 'path';
+import winston from 'winston';
+import path from 'path';
 
 const manualColorize = (strToColor: string): string => `[\x1b[35m${strToColor}\x1b[0m]`;
 

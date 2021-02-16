@@ -1,4 +1,4 @@
-import { ServerCore } from '../boot/server';
+import { ServerCore } from '../server';
 
 on('playerConnecting', (name: string, kickReason: string, defferals: any) => {
   const _source = (global as any).source;
