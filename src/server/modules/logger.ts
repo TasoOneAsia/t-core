@@ -11,9 +11,6 @@ const formatLogs = (log: winston.Logform.TransformableInfo): string => {
   return `${log.label} [${log.level}]: ${log.message}`;
 };
 
-const findLogPath = () =>
-  `${path.join(GetResourcePath(GetCurrentResourceName()), 'sv-tCore.log')}`;
-
 export const mainLogger = winston.createLogger({
   level: process.env.DEBUG_LEVEL,
   transports: [
