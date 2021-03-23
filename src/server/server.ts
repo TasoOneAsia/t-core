@@ -1,4 +1,6 @@
-import './boot/boot';
-import TCore from './modules/core';
+import 'reflect-metadata';
+import TCore from './boot/TCore';
 
-export const ServerCore = new TCore();
+const core = new TCore();
+
+core.start();

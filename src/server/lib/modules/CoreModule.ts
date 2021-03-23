@@ -1,4 +1,4 @@
-import TCore from '../boot/TCore';
+import TCore from '../../boot/TCore';
 import { ModuleHandler } from './ModuleHandler';
 
 export class CoreModule {

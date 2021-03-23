@@ -1,9 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Player as CorePlayer } from './Player';
 
 @Entity()
 export class Character {
   @PrimaryGeneratedColumn()
   characterID!: number;
+
+  @ManyToOne(() => CorePlayer, (player) => player.characters)
+  player: CorePlayer;
 
   @Column({
     nullable: false,

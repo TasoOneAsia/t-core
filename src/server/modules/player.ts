@@ -7,11 +7,12 @@ import { getCharacterRepo } from '../db/repositories/CharacterRepository';
 import { getAccountRepo } from '../db/repositories/AccountsRepository';
 import { Ped } from 'fivem-js';
 import Account from '../db/models/Account';
+import PlayerHandler from '../handlers/PlayerHandler';
 
 interface IPlayerOpts {
   source: number;
   license: string;
-  db: Connection;
+  handler: PlayerHandler;
 }
 
 export default class Player {
@@ -19,17 +20,19 @@ export default class Player {
   private _logger: Logger = mainLogger.child({
     module: 'player',
   });
+  private _isDead = false;
   public readonly source: number;
   private _currentCharacter: Character | null;
   private readonly _db: Connection;
+  private playerHandler: PlayerHandler;
 
   constructor(playerOptions: IPlayerOpts) {
     this.license = playerOptions.license;
     this.source = playerOptions.source;
-    this._db = playerOptions.db;
+    this.playerHandler = playerOptions.handler;
   }
 
-  public triggerEvent(event: string, ...args: any[]): void {
+  public emit(event: string, ...args: any[]): void {
     emitNet(event, this.source, ...args);
   }
 

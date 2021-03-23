@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import TCore from '../boot/TCore';
+import TCore from '../../boot/TCore';
 import { CoreModule } from './CoreModule';
 import { CoreModuleEvents } from './CoreTypes';
 import fs from 'fs';

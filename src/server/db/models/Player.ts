@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Character } from './Character';
 
 @Entity()
 export class Player {
@@ -18,4 +19,7 @@ export class Player {
     type: 'boolean',
   })
   isAdmin!: boolean;
+
+  @OneToMany(() => Character, (character) => character.player)
+  characters: Character[];
 }
