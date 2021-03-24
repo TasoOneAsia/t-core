@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Connection, EntityRepository, Repository } from 'typeorm';
 import { Player } from '../models/Player';
 
 @EntityRepository(Player)
@@ -17,3 +17,5 @@ export class PlayerRepository extends Repository<Player> {
     await this.update({ isBanned: bool }, { license: license });
   }
 }
+
+export const getPlayerRepo = (db: Connection) => db.getCustomRepository(PlayerRepository);

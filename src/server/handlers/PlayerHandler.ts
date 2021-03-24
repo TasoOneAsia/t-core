@@ -14,40 +14,48 @@ export default class PlayerHandler {
     module: 'PlayerHandler',
   });
 
-  private core: TCore;
+  public core: TCore;
+
+  private playersBySource = new Map<number, Player>();
+  private playersByLicense = new Map<string, Player>();
 
   constructor(core: TCore) {
     this.core = core;
+    this.log.debug('Started!');
   }
 
-  private _playersBySource = new Map<number, Player>();
-  private _playersByLicense = new Map<string, Player>();
-
-  private _connectPlayer(source: number) {
-    const license = getLicenseFromSource(source);
-    const player = new Player({ handler: this, source, license });
-    this._playersBySource.set(source, player);
-    this._playersByLicense.set(license, player);
-    this.log.info(`Connected player with source ${source}`);
-  }
-
-  private _disconnectPlayer(source: number) {
-    const playerLicense = this._playersBySource.get(source).license;
-    this._playersByLicense.delete(playerLicense);
-    this._playersBySource.delete(source);
-    this.log.info(`Disconnected player with source ${source}`);
-  }
-
-  public getPlayer(source: number): Player {
-    const player = this._playersBySource.get(source);
+  public getPlayer(_source: number): Player {
+    const player = this.playersBySource.get(_source);
     if (!player) throw new Error('Could not find player with that source');
     return player;
   }
 
   public getPlayerByLicense(license: string): Player {
-    const player = this._playersByLicense.get(license);
+    const player = this.playersByLicense.get(license);
     if (!player) throw new Error('Could not find player with that license');
     return player;
+  }
+
+  private _connectPlayer(source: number): void {
+    try {
+      const license = getLicenseFromSource(source);
+      const player = new Player({ handler: this, source, license });
+      // Fetch admin status and update
+      player.fetchIsAdmin().catch((e) => this.log.error(e));
+      // Add to maps
+      this.playersBySource.set(source, player);
+      this.playersByLicense.set(license, player);
+      this.log.info(`Connected player with source ${source}`);
+    } catch (e) {
+      this.log.error(e);
+    }
+  }
+
+  private _disconnectPlayer(source: number) {
+    const playerLicense = this.playersBySource.get(source).license;
+    this.playersByLicense.delete(playerLicense);
+    this.playersBySource.delete(source);
+    this.log.info(`Disconnected player with source ${source}`);
   }
 
   public async resolvePlayer(_source: number): Promise<PlayerModel | void> {
@@ -72,11 +80,19 @@ export default class PlayerHandler {
     return player.isBanned;
   }
 
+  public getPlayers(): number[] {
+    const players: number[] = [];
+    for (const [source, player] of this.playersBySource) {
+      players.push(source);
+    }
+    return players;
+  }
+
   @Event('playerConnecting')
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private async onConnect(name: string, kickReason: string, defferals: any) {
-    const _source = (global as any).source;
+    const _source = getSource();
     defferals.defer();
     await Delay(0);
     defferals.update('Resolving player...');
@@ -107,7 +123,8 @@ export default class PlayerHandler {
   }
 
   @Event('onServerResourceStart')
-  private debugStart(resource: string) {
+  private async debugStart(resource: string) {
+    await Delay(2000);
     if (resource === GetCurrentResourceName()) {
       // Workaround till https://github.com/citizenfx/fivem/pull/682
       // is merged

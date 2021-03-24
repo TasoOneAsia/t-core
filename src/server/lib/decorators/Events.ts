@@ -37,8 +37,6 @@ export const NetEvent = (eventName: string) => {
 export const EventListener = function () {
   return function <T extends { new (...args: any[]): any }>(constructor: T) {
     return class extends constructor {
-      public _eventListeners = [];
-
       constructor(...args: any[]) {
         super(...args);
 

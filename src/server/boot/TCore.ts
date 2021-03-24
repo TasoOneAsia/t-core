@@ -2,6 +2,7 @@ import { Logger } from 'winston';
 import { mainLogger } from '../modules/logger';
 import PlayerHandler from '../handlers/PlayerHandler';
 import Database from '../db/connection';
+import AdminModule from '../modules/admin';
 
 export default class TCore {
   private _log: Logger = mainLogger.child({
@@ -11,6 +12,8 @@ export default class TCore {
   public db = Database.get();
 
   public playerHandler = new PlayerHandler(this);
+
+  public adminModule = new AdminModule(this);
 
   async start(): Promise<void> {
     try {
